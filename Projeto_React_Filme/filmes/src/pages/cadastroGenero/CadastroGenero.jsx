@@ -13,47 +13,46 @@ const CadastroGenero = () => {
 
     const [genero, setGenero] = useState("");
     const [listaGenero, setListaGenero] = useState([]);
-    // const [deletarGenero, setDeletarGenero] = useState ();
 
-    // DELETAR INICIO
-    function deletar(titulo, mensagem) {
-        const swalWithBootstrapButtons = Swal.mixin({
-            customClass: {
-                confirmButton: "btn btn-success",
-                cancelButton: "btn btn-danger"
-            },
-            buttonsStyling: false
-        });
-        swalWithBootstrapButtons.fire({
-            title: "Are you sure?",
-            text: "You won't be able to revert this!",
-            icon: "warning",
-            showCancelButton: true,
-            confirmButtonText: "Yes, delete it!",
-            cancelButtonText: "No, cancel!",
-            reverseButtons: true
-        }).then((result) => {
-            if (result.isConfirmed) {
-                swalWithBootstrapButtons.fire({
-                    // aqui tem bagulho
-                    title: titulo,
-                    text: mensagem,
-                    icon: "warning"
-                });
-            } else if (
-                /* Read more about handling dismissals below */
-                result.dismiss === Swal.DismissReason.cancel
-            ) {
-                swalWithBootstrapButtons.fire({
-                    // aqui tem bagulho tambem
-                    title: titulo,
-                    text: mensagem,
-                    icon: "success"
-                });
-            }
-        });
+    // // DELETAR INICIO
+    // function deletar(titulo, mensagem) {
+    //     const swalWithBootstrapButtons = Swal.mixin({
+    //         customClass: {
+    //             confirmButton: "btn btn-success",
+    //             cancelButton: "btn btn-danger"
+    //         },
+    //         buttonsStyling: false
+    //     });
+    //     swalWithBootstrapButtons.fire({
+    //         title: "Are you sure?",
+    //         text: "You won't be able to revert this!",
+    //         icon: "warning",
+    //         showCancelButton: true,
+    //         confirmButtonText: "Yes, delete it!",
+    //         cancelButtonText: "No, cancel!",
+    //         reverseButtons: true
+    //     }).then((result) => {
+    //         if (result.isConfirmed) {
+    //             swalWithBootstrapButtons.fire({
+    //                 // aqui tem bagulho
+    //                 title: titulo,
+    //                 text: mensagem,
+    //                 icon: "warning"
+    //             });
+    //         } else if (
+    //             /* Read more about handling dismissals below */
+    //             result.dismiss === Swal.DismissReason.cancel
+    //         ) {
+    //             swalWithBootstrapButtons.fire({
+    //                 // aqui tem bagulho tambem
+    //                 title: titulo,
+    //                 text: mensagem,
+    //                 icon: "success"
+    //             });
+    //         }
+    //     });
 
-    }
+    // }
 
 
     function alerta(icone, mensagem) {
@@ -107,16 +106,53 @@ const CadastroGenero = () => {
         }
     }
 
-    // funcao de excluir o genero;)//
-    async function deletarGenero(Generoid) {
-        try {
-            await api.delete(`genero/${Generoid.idGenero}`)
-        } catch (error) { 
-            deletar("Tem certeza que deseja deletar","Essa ação não podera ser desfeita","Voce canselou sua ação","O genero não foi deletado")
-            console.log(error)
-        }
+    async function deletarGenero(id) {
 
 
+        const swalWithBootstrapButtons = Swal.mixin({
+            customClass: {
+                confirmButton: "btn btn-success",
+                cancelButton: "btn btn-danger"
+            },
+            buttonsStyling: true
+        });
+        swalWithBootstrapButtons.fire({
+            title: "Voce realmente quer deletar esse genero?",
+            text: "Voce nao podera desfazer essa açao futuramente, tera que recadastrar caso quera utilizar o genero deletado novamente ",
+            icon: "warning",
+            showCancelButtzon: true,
+            confirmButtonText: "Sim, Quero deletar!",
+            cancelButtonText: "Nao,quero cancelar!",
+            reverseButtons: true
+        }).then(async (result) => {
+            if (result.isConfirmed) {
+                try {
+
+                    await api.delete(`genero/${id.idGenero}`)
+                    alerta("success", "Genero excluido com sucesso")
+                    swalWithBootstrapButtons.fire({
+                        title: "Deletado!!!",
+                        text: "O genero selecionado foi deletado com sucesso!!!",
+                        icon: "success"
+                    });
+                    setGenero();
+                    listaGenero();
+
+                } catch (error) {
+                    alerta("error","ERRO ")
+                    console.log(error)
+                }
+            } else if (
+                /* Read more about handling dismissals below */
+                result.dismiss === Swal.DismissReason.cancel
+            ) {
+                swalWithBootstrapButtons.fire({
+                    title: "Cancelado",
+                    text: "Seu genero nao foi deletado, pode utiliza-lo sem preocupaçao:)",
+                    icon: "error"
+                });
+            }
+        });
 
     }
 
